@@ -79,7 +79,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.example.MainClass</mainClass>
+                            <mainClass>datamind.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -95,4 +95,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
