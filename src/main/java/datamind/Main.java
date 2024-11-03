@@ -155,7 +155,7 @@ public class Main {
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS cargo (
                     idCargo INT PRIMARY KEY AUTO_INCREMENT,
-                    cargo VARCHAR(45)
+                    nomeCargo VARCHAR(45)
                 );
                 """);
 
@@ -213,6 +213,6 @@ public class Main {
                 """);
 
         // Inserindo cargo de exemplo
-        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 1, "Responsável Legal");
+        connection.update("INSERT IGNORE INTO cargo (idCargo, nomeCargo) VALUES (?, ?);", 1, "Responsável Legal");
     }
 }
