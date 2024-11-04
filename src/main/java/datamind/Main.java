@@ -47,7 +47,7 @@ public class Main {
 
         // Listando objetos do bucket
         String date = getCurrentTimestamp();
-        System.out.println("========== Iniciando Conexão com o banco " + date + " ==========");
+        System.out.println("========== Iniciando Conexão com o bucket " + date + " ==========");
         List<S3Object> objects = null;
         try {
             ListObjectsRequest listObjects = ListObjectsRequest.builder()
