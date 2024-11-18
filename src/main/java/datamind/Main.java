@@ -26,7 +26,7 @@ public class Main {
         Main app = new Main();
 
         // Função para conectar no bucket
-        //app.connectionBucket();
+        app.connectionBucket();
 
         // Função para gerenciar conexão e criar tabelas
         app.setupDatabase();
