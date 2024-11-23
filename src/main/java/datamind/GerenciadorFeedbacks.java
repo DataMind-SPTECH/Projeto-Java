@@ -26,6 +26,10 @@ public class GerenciadorFeedbacks {
         // Recuperando o arquivo
         System.out.println("Abrindo arquivo Excel...");
         @Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
+        /*
+        Para Facilitar teste, não excluir
+        @Cleanup FileInputStream file = new FileInputStream("C:\\Users\\User\\Documents\\SPTech\\2 Semestre\\PI\\Projeto-Java\\src\\main\\resources\\Feedbacks McDonalds (50).xlsx");
+         */
         Workbook workbook = new XSSFWorkbook(file);
 
         // Setando a aba

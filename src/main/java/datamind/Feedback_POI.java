@@ -18,10 +18,11 @@ public class Feedback_POI {
     private String Comentario;
     private String Avaliacao;
 
-    // Construtor que aceita apenas Comentario e Avaliacao como número
-    public Feedback_POI(String comentario, Integer avaliacao) {
+    // Construtor que aceita apenas Comentario, Avaliacao como número e endereco
+    public Feedback_POI(String comentario, Integer avaliacao, String Endereco) {
         this.Comentario = comentario;
         this.Avaliacao = (avaliacao != null) ? String.valueOf(avaliacao) : null;
+        this.Endereco = Endereco;
     }
 
     // Adicione um construtor padrão (opcional) para os outros campos

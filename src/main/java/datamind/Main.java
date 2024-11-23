@@ -109,8 +109,8 @@ public class Main {
         GerenciadorFeedbacks gerenciadorFeedbacks = new GerenciadorFeedbacks();
         List<Feedback_POI> feedbacks = gerenciadorFeedbacks.criar();
         TratacaoDeDados TratadorDeDados = new TratacaoDeDados();
+        TratacaoDeDados.inserirFiliais(feedbacks);
         List<Feedback_POI> dadosTratados = TratadorDeDados.processarDados(feedbacks);
-
         TratacaoDeDados.inserindoDadosNoBanco(dadosTratados);
     }
 
@@ -135,22 +135,27 @@ public class Main {
                     idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
                     nomeEmpresa VARCHAR(45),
                     cnpj CHAR(14),
-                    cep CHAR(8),
-                    rua VARCHAR(45),
-                    bairro VARCHAR(45),
-                    complemento VARCHAR(45),
-                    cidade VARCHAR(20),
-                    estado VARCHAR(20),
-                    numero VARCHAR(5),
+                    urlfoto VARCHAR(264),
                     fkDataset INT,
-                    fkMatriz INT,
-                    FOREIGN KEY (fkDataset) REFERENCES dataset(idDataset),
-                    FOREIGN KEY (fkMatriz) REFERENCES empresa(idEmpresa)
+                    FOREIGN KEY (fkDataset) REFERENCES dataset(idDataset)
                 );
                 """);
 
         // Inserindo dados da empresa
-        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, cep, rua, bairro, complemento, cidade, estado, numero, fkDataset, fkMatriz) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", 1, "Mc Donalds", "42591651000143" , "06333272", "Avenida Paulista", "Cerqueira Cesar", "Andar 1", "São Paulo", "São Paulo", "1000", 1, null);
+        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, urlfoto, fkDataset) VALUES (?, ?, ?, ?, ?);", 1, "McDonald's", "42591651000143" , null, 1);
+
+
+        connection.execute("""
+                CREATE TABLE IF NOT EXISTS filial (
+                    idFilial INT PRIMARY KEY AUTO_INCREMENT,
+                    Nome VARCHAR (200),
+                    endereco VARCHAR(150),
+                    latitude INT,
+                    longitude INT,
+                    fkEmpresa INT,
+                    FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
+                );
+                """);
 
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS cargo (
@@ -205,9 +210,9 @@ public class Main {
                     idFeedback INT PRIMARY KEY AUTO_INCREMENT,
                     descricao VARCHAR(2000),
                     rating INT,
-                    fkEmpresa INT,
+                    fkFilial INT,
                     fkCategoria INT,
-                    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
+                    FOREIGN KEY (fkFilial) REFERENCES filial(idfilial),
                     FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
                 );
                 """);
