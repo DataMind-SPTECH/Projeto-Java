@@ -110,8 +110,6 @@ public class TratacaoDeDados {
                             System.out.println("Erro ao inserir o feedback com descrição: " + comentario);
                         }
                     }
-                } else {
-                    System.out.println("Feedback duplicado detectado: " + comentario + " - " + avaliacao);
                 }
 
             } catch (Exception e) {
@@ -140,8 +138,8 @@ public class TratacaoDeDados {
             String NomeEmpresa = feedback.getNome();
             String nomeFilial = feedback.getNome() + feedback.getEndereco(); // Nome da filial
             String enderecoFilial = feedback.getEndereco(); // Endereço da filial
-            double latitude = feedback.getLatitude(); // Latitude
-            double longitude = feedback.getLongitude(); // Longitude
+            String latitude = feedback.getLatitude(); // Latitude
+            String longitude = feedback.getLongitude(); // Longitude
 
             // Verifica se a filial já existe no banco
             Integer countFilial = connection.queryForObject(
@@ -179,8 +177,6 @@ public class TratacaoDeDados {
                 } else {
                     System.out.println("Não foi possível inserir a filial sem uma empresa válida: " + nomeFilial);
                 }
-            } else {
-                System.out.println("Filial já existe no banco: " + nomeFilial + " - " + enderecoFilial);
             }
         }
 

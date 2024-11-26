@@ -24,12 +24,12 @@ public class GerenciadorFeedbacks {
         List<Feedback_POI> feedbacks = new ArrayList<>();
 
         // Recuperando o arquivo
-        System.out.println("Abrindo arquivo Excel...");
-        @Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
-        /*
-        Para Facilitar teste, não excluir
-        @Cleanup FileInputStream file = new FileInputStream("C:\\Users\\User\\Documents\\SPTech\\2 Semestre\\PI\\Projeto-Java\\src\\main\\resources\\Feedbacks McDonalds (50).xlsx");
-         */
+        //System.out.println("Abrindo arquivo Excel...");
+        //@Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
+
+        //Para Facilitar teste, não excluir
+        @Cleanup FileInputStream file = new FileInputStream("src/main/Dataset feedbacks McDonalds.xlsx");
+
         Workbook workbook = new XSSFWorkbook(file);
 
         // Setando a aba
@@ -49,15 +49,20 @@ public class GerenciadorFeedbacks {
             // Setando as células
             List<Cell> cells = (List<Cell>) toList(row.cellIterator());
 
+            if (cells.size() < 10) {
+                System.err.println("Linha ignorada devido ao número insuficiente de células: " + cells.size());
+                return; // Ignora linhas inválidas
+            }
+
             // Atribui os valores para a classe Feedback_POI
             Feedback_POI feedback = Feedback_POI.builder()
                     .Id((int) cells.get(0).getNumericCellValue())
                     .Nome(cells.get(1).getStringCellValue())
                     .Categoria(cells.get(2).getStringCellValue())
                     .Endereco(cells.get(3).getStringCellValue())
-                    .Latitude((int) cells.get(4).getNumericCellValue())
-                    .Longitude((int) cells.get(5).getNumericCellValue())
-                    .Rating_count(String.valueOf(cells.get(6).getNumericCellValue()))
+                    .Latitude(String.valueOf(cells.get(4).getNumericCellValue()))
+                    .Longitude(getCellValueAsString(cells.get(5)))
+                    .Rating_count(getCellValueAsString(cells.get(6)))
                     .Tempo_Feedback(cells.get(7).getStringCellValue())
                     .Comentario(cells.get(8).getStringCellValue())
                     .Avaliacao(cells.get(9).getStringCellValue())
@@ -70,6 +75,28 @@ public class GerenciadorFeedbacks {
         System.out.println("Total de feedbacks criados: " + feedbacks.size() + "\n");
         return feedbacks;
     }
+
+    private static String getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return ""; // Retorna uma string vazia se a célula for nula
+        }
+        switch (cell.getCellType()) {
+            case NUMERIC:
+                return String.valueOf(cell.getNumericCellValue());
+            case STRING:
+                return cell.getStringCellValue();
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                // Avalia a fórmula e retorna o resultado
+                return String.valueOf(cell.getNumericCellValue());
+            case BLANK:
+                return ""; // Retorna uma string vazia para células em branco
+            default:
+                throw new IllegalStateException("Tipo de célula inesperado: " + cell.getCellType());
+        }
+    }
+
 
     public String getCurrentTimestamp() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");

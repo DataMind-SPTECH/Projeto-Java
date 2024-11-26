@@ -11,8 +11,8 @@ public class Feedback_POI {
     private String Nome;
     private String Categoria;
     private String Endereco;
-    private Integer Latitude;
-    private Integer Longitude;
+    private String Latitude;
+    private String Longitude;
     private String Rating_count;
     private String Tempo_Feedback;
     private String Comentario;
@@ -26,8 +26,8 @@ public class Feedback_POI {
     }
 
     // Adicione um construtor padrão (opcional) para os outros campos
-    public Feedback_POI(Integer id, String nome, String categoria, String endereco, Integer latitude,
-                        Integer longitude, String rating_count, String tempo_feedback, String comentario,
+    public Feedback_POI(Integer id, String nome, String categoria, String endereco, String latitude,
+                        String longitude, String rating_count, String tempo_feedback, String comentario,
                         String avaliacao) {
         this.Id = id;
         this.Nome = nome;

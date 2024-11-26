@@ -26,7 +26,7 @@ public class Main {
         Main app = new Main();
 
         // Função para conectar no bucket
-        app.connectionBucket();
+        //app.connectionBucket();
 
         // Função para gerenciar conexão e criar tabelas
         app.setupDatabase();
@@ -135,7 +135,7 @@ public class Main {
                     idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
                     nomeEmpresa VARCHAR(45),
                     cnpj CHAR(14),
-                    urlfoto VARCHAR(264),
+                    urlFoto VARCHAR(264),
                     fkDataset INT,
                     FOREIGN KEY (fkDataset) REFERENCES dataset(idDataset)
                 );
@@ -148,10 +148,10 @@ public class Main {
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS filial (
                     idFilial INT PRIMARY KEY AUTO_INCREMENT,
-                    Nome VARCHAR (200),
+                    nome VARCHAR (200),
                     endereco VARCHAR(150),
-                    latitude INT,
-                    longitude INT,
+                    latitude VARCHAR(45),
+                    longitude VARCHAR(45),
                     fkEmpresa INT,
                     FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
                 );
@@ -160,9 +160,10 @@ public class Main {
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS cargo (
                     idCargo INT PRIMARY KEY AUTO_INCREMENT,
-                    nomeCargo VARCHAR(45)
+                    cargo VARCHAR(45)
                 );
                 """);
+        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 1, "Responsável Legal");
 
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS funcionario (
@@ -178,6 +179,7 @@ public class Main {
                     FOREIGN KEY (fkCargo) REFERENCES cargo(idCargo)
                 );
                 """);
+        connection.update("INSERT IGNORE INTO funcionario (idFuncionario, nome, email, senha, telefone, cpf, fkEmpresa, fkCargo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", 1, "Henrique", "henrique@gmail.com", "12345678", null, "12345678901", 1, 1);
 
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS categoria (
@@ -216,8 +218,5 @@ public class Main {
                     FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
                 );
                 """);
-
-        // Inserindo cargo de exemplo
-        connection.update("INSERT IGNORE INTO cargo (idCargo, nomeCargo) VALUES (?, ?);", 1, "Responsável Legal");
     }
 }
