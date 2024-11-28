@@ -14,6 +14,7 @@ import java.util.UUID;
 import datamind.Feedback_POI;
 import datamind.GerenciadorFeedbacks;
 import datamind.TratacaoDeDados;
+import org.json.JSONObject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -22,7 +23,7 @@ import software.amazon.awssdk.core.sync.ResponseTransformer;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException  {
         Main app = new Main();
 
         // Função para conectar no bucket
@@ -33,6 +34,12 @@ public class Main {
 
         // Função para gerenciar feedbacks
         app.runFeedbackManager();
+
+        // Envio de mensagem do slack
+        JSONObject json = new JSONObject();
+        json.put("text", "Ola, sou Brainy, o robô desenvolvido pela Datamind😊");
+
+        Slack.sendMessage(json);
 
     }
 
