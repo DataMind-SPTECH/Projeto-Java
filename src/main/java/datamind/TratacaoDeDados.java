@@ -19,14 +19,23 @@ public class TratacaoDeDados {
             String comentario = feedback.getComentario();
             String avaliacao = feedback.getAvaliacao();
             String Endereco = feedback.getEndereco();
+            String Categoria = feedback.getCategoria_feedback();
+
+            List<String> CategoriasValidas = new ArrayList<>(List.of(
+                    "Qualidade do Produto",
+                    "Atendimento",
+                    "Tempo de espera",
+                    "Experiência no Drive-thru",
+                    "Experiência Geral"
+            ));
 
             // Condição 1: Verificar se um caractere específico está presente no comentário
-            if (comentario.contains("½ï¿")) {
+            if (comentario.contains("½ï¿") ) {
                 continue;
             }
 
             // Condição 2: Pegar a primeira posição da string de avaliação e transformar em número
-            if (!avaliacao.isEmpty()) {
+            if (!avaliacao.isEmpty() || (!Categoria.isEmpty() && CategoriasValidas.contains(Categoria))) {
                 char firstChar = avaliacao.charAt(0);
                 int number = Character.getNumericValue(firstChar);
 
@@ -35,7 +44,8 @@ public class TratacaoDeDados {
                     Feedback_POI feedbackTratado = new Feedback_POI(
                             comentario, // Comentário mantido
                             number, // Nota obtida
-                            Endereco // Endereço Obtido
+                            Endereco,
+                            Categoria// Endereço Obtido
                     );
                     dadosTratados.add(feedbackTratado);
                 } else {
@@ -75,6 +85,7 @@ public class TratacaoDeDados {
             String comentario = feedback.getComentario();
             String avaliacao = feedback.getAvaliacao();
             String endereco = feedback.getEndereco();
+            String categoria = feedback.getCategoria_feedback();
 
             try {
                 // Verifica se o feedback já existe no banco de dados
@@ -87,6 +98,26 @@ public class TratacaoDeDados {
                 if (count == null || count == 0) {
                     // Obtém o idFilial baseado no endereço, tratando a ausência de resultado
                     Integer idFilial = null;
+                    Integer IdCategoria = null;
+
+                    switch (categoria) {
+                        case "Qualidade do produto":
+                            IdCategoria = 1;
+                            break;
+                        case "Atendimento":
+                            IdCategoria = 2;
+                            break;
+                        case "Tempo de espera":
+                            IdCategoria = 3;
+                            break;
+                        case "Experiência do drive thru":
+                            IdCategoria = 4;
+                            break;
+                        case "Experiência geral":
+                            IdCategoria = 5;
+                            break;
+                    }
+
                     try {
                         idFilial = connection.queryForObject(
                                 "SELECT idFilial FROM filial WHERE endereco = ?",
@@ -101,7 +132,7 @@ public class TratacaoDeDados {
                     if (idFilial != null) {
                         int rowsAffected = connection.update(
                                 "INSERT INTO feedback (descricao, rating , fkFilial, fkCategoria) VALUES (?, ?, ?, ?);",
-                                comentario, avaliacao, idFilial, 1
+                                comentario, avaliacao, idFilial, IdCategoria
                         );
 
                         if (rowsAffected > 0) {

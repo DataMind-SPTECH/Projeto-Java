@@ -189,8 +189,11 @@ public class Main {
                 """);
 
         //Inserindo categorias
-        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 1, "Velocidade do Drive-Thru");
-        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 2, "Lanche frio");
+        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 1, "Qualidade do produto");
+        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 2, "Atendimento");
+        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 3, "Tempo de espera");
+        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 4, "Experiência do drive thru");
+        connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 5, "Experiência geral");
 
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS recomendacoesIA (
@@ -210,7 +213,7 @@ public class Main {
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS feedback (
                     idFeedback INT PRIMARY KEY AUTO_INCREMENT,
-                    descricao VARCHAR(2000),
+                    descricao VARCHAR(10000),
                     rating INT,
                     fkFilial INT,
                     fkCategoria INT,

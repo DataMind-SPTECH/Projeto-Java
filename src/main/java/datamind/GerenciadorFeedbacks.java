@@ -28,7 +28,7 @@ public class GerenciadorFeedbacks {
         //@Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
 
         //Para Facilitar teste, não excluir
-        @Cleanup FileInputStream file = new FileInputStream("src/main/Dataset feedbacks McDonalds.xlsx");
+        @Cleanup FileInputStream file = new FileInputStream("src/main/feedbacks_categorizados.xlsx");
 
         Workbook workbook = new XSSFWorkbook(file);
 
@@ -49,8 +49,8 @@ public class GerenciadorFeedbacks {
             // Setando as células
             List<Cell> cells = (List<Cell>) toList(row.cellIterator());
 
-            if (cells.size() < 10) {
-                System.err.println("Linha ignorada devido ao número insuficiente de células: " + cells.size());
+            if (cells.size() < 11) {
+                //System.err.println("Linha ignorada devido ao número insuficiente de células: " + cells.size());
                 return; // Ignora linhas inválidas
             }
 
@@ -66,6 +66,7 @@ public class GerenciadorFeedbacks {
                     .Tempo_Feedback(cells.get(7).getStringCellValue())
                     .Comentario(cells.get(8).getStringCellValue())
                     .Avaliacao(cells.get(9).getStringCellValue())
+                    .categoria_feedback(cells.get(10).getStringCellValue())
                     .build();
 
             feedbacks.add(feedback);
