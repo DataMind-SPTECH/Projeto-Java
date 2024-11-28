@@ -36,10 +36,11 @@ public class Main {
         app.runFeedbackManager();
 
         // Envio de mensagem do slack
-        JSONObject json = new JSONObject();
-        json.put("text", "Ola, sou Brainy, o robô desenvolvido pela Datamind😊");
+       GerenciadorFeedbacks gerenciador = new GerenciadorFeedbacks();
+        List<Feedback_POI> feedbacks = gerenciador.criar(); // Carrega os feedbacks do XLSX
 
-        Slack.sendMessage(json);
+        // Verifica e notifica eventos ao Slack
+        gerenciador.verificarENotificar(feedbacks);
 
     }
 
