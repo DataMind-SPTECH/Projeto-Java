@@ -153,7 +153,7 @@ public class Main {
                     latitude VARCHAR(45),
                     longitude VARCHAR(45),
                     fkEmpresa INT,
-                    FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
+                    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
                 );
                 """);
 
