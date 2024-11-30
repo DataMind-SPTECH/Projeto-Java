@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -97,6 +98,67 @@ public class GerenciadorFeedbacks {
                 throw new IllegalStateException("Tipo de célula inesperado: " + cell.getCellType());
         }
     }
+
+    public void verificarENotificar(List<Feedback_POI> feedbacks) throws IOException, InterruptedException {
+        Slack slack = new Slack("https://hooks.slack.com/services/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");
+
+        // Inicializando contadores como Integer
+        Integer totalCincoEstrelas = 0;
+        Integer totalAvaliacoesNegativas = 0;
+        Integer totalAvaliacoesNeutras = 0;
+
+        // Percorrendo cada feedback e verificando as avaliações individuais
+        for (Feedback_POI feedback : feedbacks) {
+            String avaliacao = feedback.getAvaliacao();
+
+            // Verifica se a avaliação é 5 estrelas
+            if (avaliacao.equals("5")) {
+                totalCincoEstrelas++;
+            }
+
+            // Verifica se a avaliação é 2 estrelas ou menos (avaliação negativa)
+            if (avaliacao.equals("2") || avaliacao.equals("1")) {
+                totalAvaliacoesNegativas++;
+            }
+
+            // Verifica se a avaliação é 3 estrelas (avaliação neutra)
+            if (avaliacao.equals("3")) {
+                totalAvaliacoesNeutras++;
+            }
+        }
+
+        // Envia a mensagem se houver avaliações de 5 estrelas
+        if (totalCincoEstrelas > 0) {
+            String alertaPositivo = "🎉 Sucesso: Recebemos " + totalCincoEstrelas + " avaliação(s) de 5 estrelas!";
+            slack.sendMessage(alertaPositivo);
+        }
+
+        // Envia a mensagem se houver avaliações negativas (1 ou 2 estrelas)
+        if (totalAvaliacoesNegativas > 0) {
+            String alertaNegativo = "🚨 Alerta: Recebemos " + totalAvaliacoesNegativas + " avaliação(ões) negativa(s)!";
+            slack.sendMessage(alertaNegativo);
+        }
+
+        // Envia a mensagem se houver avaliações neutras (3 estrelas)
+        if (totalAvaliacoesNeutras > 0) {
+            String alertaNeutra = "🤔 Neutro: Recebemos " + totalAvaliacoesNeutras + " avaliação(ões) neutra(s)!";
+            slack.sendMessage(alertaNeutra);
+        }
+
+        // Exibe a mensagem final com base nas comparações de quantidade
+        if (totalAvaliacoesNegativas > totalAvaliacoesNeutras && totalAvaliacoesNegativas > totalCincoEstrelas) {
+            String mensagemFinal =
+                    "⚠️ Cuidado, temos muitas avaliações negativas por aqui, que tal acessar a Dashboard para algumas recomendações de melhoria?";
+            slack.sendMessage(mensagemFinal);
+        } else if (totalAvaliacoesNeutras > totalCincoEstrelas && totalAvaliacoesNeutras > totalAvaliacoesNegativas) {
+            String mensagemFinal = "👌 Tudo parcialmente bem até o momento, que tal acessar a Dashboards para algumas recomendações de melhoria e alcançar maiores notas?";
+            slack.sendMessage(mensagemFinal);
+        } else if (totalCincoEstrelas > totalAvaliacoesNegativas && totalCincoEstrelas > totalAvaliacoesNeutras) {
+            String mensagemFinal = "🎉 Uau, seu negócio tem muitas avaliações boas, continue assim para que ainda tenha ótimas impressões!";
+            slack.sendMessage(mensagemFinal);
+        }
+    }
+
 
 
     public String getCurrentTimestamp() {

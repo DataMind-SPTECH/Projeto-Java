@@ -10,20 +10,20 @@ public class DBConnectionProvider {
     private final DataSource dataSource;
 
     public DBConnectionProvider() {
-        BasicDataSource basicDataSource = new BasicDataSource();
+   /*      BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setUrl("jdbc:mysql://"+System.getenv("DB_HOST")+":3306/"+System.getenv("DB_DATABASE"));
         basicDataSource.setUsername(System.getenv("DB_USER"));
         basicDataSource.setPassword(System.getenv("DB_PASSWORD"));
-        basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-/* 
-Para facilitar teste, não excluir
+        basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");*/
+
+//Para facilitar teste, não excluir
 
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setUrl("jdbc:mysql://localhost:3306/datamind");
         basicDataSource.setUsername("root"); // Nome de usuário correto
-        basicDataSource.setPassword("Naomelembro2024@"); // Senha correta
+        basicDataSource.setPassword("arr161820"); // Senha correta
         basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-*/
+
         this.dataSource = basicDataSource;
     }
 

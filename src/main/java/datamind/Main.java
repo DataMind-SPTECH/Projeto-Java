@@ -34,14 +34,6 @@ public class Main {
 
         // Função para gerenciar feedbacks
         app.runFeedbackManager();
-
-        // Envio de mensagem do slack
-       GerenciadorFeedbacks gerenciador = new GerenciadorFeedbacks();
-        List<Feedback_POI> feedbacks = gerenciador.criar(); // Carrega os feedbacks do XLSX
-
-        // Verifica e notifica eventos ao Slack
-        gerenciador.verificarENotificar(feedbacks);
-
     }
 
     public String getCurrentTimestamp() {
@@ -113,13 +105,14 @@ public class Main {
         }
     }
 
-    private void runFeedbackManager() throws IOException {
+    private void runFeedbackManager() throws IOException, InterruptedException {
         GerenciadorFeedbacks gerenciadorFeedbacks = new GerenciadorFeedbacks();
         List<Feedback_POI> feedbacks = gerenciadorFeedbacks.criar();
         TratacaoDeDados TratadorDeDados = new TratacaoDeDados();
         TratacaoDeDados.inserirFiliais(feedbacks);
         List<Feedback_POI> dadosTratados = TratadorDeDados.processarDados(feedbacks);
         TratacaoDeDados.inserindoDadosNoBanco(dadosTratados);
+        gerenciadorFeedbacks.verificarENotificar(dadosTratados);
     }
 
     private void setupDatabase() {
