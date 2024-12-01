@@ -123,9 +123,12 @@ public class Main {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         System.out.println("\n========== Iniciando geração de palavras chaves "+ sdf.format(new Date()) +" ==========");
         TratacaoDeDados.gerarPalavrasChavesPositivas();
+        Thread.sleep(5000);
         TratacaoDeDados.gerarPalavrasChavesNeutras();
+        Thread.sleep(5000);
         TratacaoDeDados.gerarPalavrasChavesNegativas();
-        System.out.println("\n========== Geração de palavras chaves finalizada"+ sdf.format(new Date()) +" ==========");
+        Thread.sleep(5000);
+        System.out.println("\n========== Geração de palavras chaves finalizada "+ sdf.format(new Date()) +" ==========");
     }
 
     private void setupDatabase() {

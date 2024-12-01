@@ -100,7 +100,7 @@ public class GerenciadorFeedbacks {
     }
 
     public void verificarENotificar(List<Feedback_POI> feedbacks) throws IOException, InterruptedException {
-        Slack slack = new Slack("https://hooks.slack.com/services/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");
+        Slack slack = new Slack(System.getenv("LINK_SLACK"));
 
         System.out.println("\n========== Iniciando envio de notificação "+ getCurrentTimestamp() +" ==========");
         // Inicializando contadores como Integer

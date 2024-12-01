@@ -10,10 +10,16 @@ public class DBConnectionProvider {
     private final DataSource dataSource;
 
     public DBConnectionProvider() {
+        String DB_HOST = System.getenv("DB_HOST");
+        String DB_PORT = System.getenv("DB_PORT");
+        String DB_DATABASE = System.getenv("DB_DATABASE");
+        String DB_USER = System.getenv("DB_USER");
+        String DB_PASSWORD = System.getenv("DB_PASSWORD");
+
         BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setUrl("jdbc:mysql://"+System.getenv("DB_HOST")+":3306/"+System.getenv("DB_DATABASE"));
-        basicDataSource.setUsername(System.getenv("DB_USER"));
-        basicDataSource.setPassword(System.getenv("DB_PASSWORD"));
+        basicDataSource.setUrl("jdbc:mysql://"+ DB_HOST +":"+ DB_PORT +"/"+ DB_DATABASE);
+        basicDataSource.setUsername(DB_USER);
+        basicDataSource.setPassword(DB_PASSWORD);
         basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
 

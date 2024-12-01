@@ -218,7 +218,7 @@ public class TratacaoDeDados {
         System.out.println("\n========== Inserção de filiais concluída "+ sdf.format(new Date()) +" ==========");
     }
 
-    public static void gerarRecomendacoes() {
+    public static void gerarRecomendacoes() throws InterruptedException {
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -302,7 +302,7 @@ public class TratacaoDeDados {
         System.out.println("\n========== Geração de recomendações finalizada "+ sdf.format(new Date()) +" ==========");
     }
 
-    public static void gerarPalavrasChavesPositivas() {
+    public static void gerarPalavrasChavesPositivas() throws InterruptedException {
 
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
@@ -371,7 +371,7 @@ public class TratacaoDeDados {
         }
     }
 
-    public static void gerarPalavrasChavesNeutras() {
+    public static void gerarPalavrasChavesNeutras() throws InterruptedException {
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
@@ -438,7 +438,7 @@ public class TratacaoDeDados {
         }
     }
 
-    public static void gerarPalavrasChavesNegativas() {
+    public static void gerarPalavrasChavesNegativas() throws InterruptedException {
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
@@ -501,7 +501,7 @@ public class TratacaoDeDados {
                 // Log de erro em caso de falha na inserção
                 System.err.println("Erro ao inserir palavras chaves negativas para a categoria " + idCategoria + ": " + e.getMessage());
             }
-            System.out.println("\n------------------------------------\n")
+            System.out.println("\n------------------------------------\n");
         }
     }
 
