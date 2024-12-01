@@ -106,13 +106,15 @@ public class Main {
         }
     }
 
-    private void runFeedbackManager() throws IOException {
+    private void runFeedbackManager() throws IOException, InterruptedException {
         GerenciadorFeedbacks gerenciadorFeedbacks = new GerenciadorFeedbacks();
         List<Feedback_POI> feedbacks = gerenciadorFeedbacks.criar();
         TratacaoDeDados TratadorDeDados = new TratacaoDeDados();
         TratacaoDeDados.inserirFiliais(feedbacks);
         List<Feedback_POI> dadosTratados = TratadorDeDados.processarDados(feedbacks);
         TratacaoDeDados.inserindoDadosNoBanco(dadosTratados);
+      
+        gerenciadorFeedbacks.verificarENotificar(dadosTratados);
 
         TratacaoDeDados.gerarRecomendacoes();
         TratacaoDeDados.gerarPalavrasChavesPositivas();
