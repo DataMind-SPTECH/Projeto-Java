@@ -4,7 +4,7 @@ import okhttp3.*;
 import com.google.gson.*;
 
 public class GeminiRestApi {
-    public static String obterRespostaDaIA(String prompt) {
+    public static String obterRespostaDaIA(String prompt) throws InterruptedException {
         String apiKey = "AIzaSyDvkhMiz-PaFvnnaHHWgxjsh8tV4pylVik";
         String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
@@ -51,6 +51,7 @@ public class GeminiRestApi {
             e.printStackTrace();
             return "Erro ao processar a requisição: " + e.getMessage();
         }
+        Thread.sleep(5000);
     }
 
     public static void main(String[] args) {

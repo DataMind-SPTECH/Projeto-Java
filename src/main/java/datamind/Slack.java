@@ -5,6 +5,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONObject;
 
 public class Slack {
@@ -29,7 +32,7 @@ public class Slack {
             JSONObject jsonPayload = new JSONObject();
             jsonPayload.put("text", message);
 
-            System.out.println("Payload a ser enviado: " + jsonPayload.toString()); // Para debug
+            //System.out.println("Payload a ser enviado: " + jsonPayload.toString()); // Para debug
 
             // Cria a requisição HTTP
             HttpRequest request = HttpRequest.newBuilder()
@@ -58,4 +61,8 @@ public class Slack {
         }
     }
 
+    public String getCurrentTimestamp() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return sdf.format(new Date());
+    }
 }

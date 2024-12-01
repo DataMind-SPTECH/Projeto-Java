@@ -27,10 +27,10 @@ public class Main {
         Main app = new Main();
 
         // Função para conectar no bucket
-        //app.connectionBucket();
+        app.connectionBucket();
 
         // Função para gerenciar conexão e criar tabelas
-        app.setupDatabase();
+        //app.setupDatabase();
 
         // Função para gerenciar feedbacks
         app.runFeedbackManager();
@@ -60,6 +60,8 @@ public class Main {
             if (objects.isEmpty()) {
                 System.out.println("O bucket está vazio. Realizando upload de um novo arquivo...");
                 uploadFile(s3Client, bucketName);
+                objects = s3Client.listObjects(listObjects).contents();
+                downloadFiles(s3Client, bucketName, objects);
             } else {
                 System.out.println("Objetos no bucket " + bucketName + ":");
                 for (S3Object object : objects) {
@@ -80,7 +82,7 @@ public class Main {
                     .key(uniqueFileName)
                     .build();
 
-            File file = new File("src\\main\\resources\\Feedbacks McDonalds (50).xlsx");
+            File file = new File("src\\main\\feedbacks_categorizados.xlsx");
             s3Client.putObject(putObjectRequest, RequestBody.fromFile(file));
 
             System.out.println("Arquivo '" + file.getName() + "' enviado com sucesso com o nome: " + uniqueFileName);
@@ -117,9 +119,13 @@ public class Main {
         gerenciadorFeedbacks.verificarENotificar(dadosTratados);
 
         TratacaoDeDados.gerarRecomendacoes();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        System.out.println("\n========== Iniciando geração de palavras chaves "+ sdf.format(new Date()) +" ==========");
         TratacaoDeDados.gerarPalavrasChavesPositivas();
         TratacaoDeDados.gerarPalavrasChavesNeutras();
         TratacaoDeDados.gerarPalavrasChavesNegativas();
+        System.out.println("\n========== Geração de palavras chaves finalizada"+ sdf.format(new Date()) +" ==========");
     }
 
     private void setupDatabase() {
@@ -212,11 +218,6 @@ public class Main {
                   	FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
                 );
                 """);
-
-        //Inserindo recomendação
-       // connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 1, "Você poderia redistribuir os funcionários conforme a demanda do Drive-Thru", "2024-10-29", 1);
-       // connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 2, "Você poderia acelerar a montagem do lanche para que ele não esfrie", "2024-10-30", 2);
-
 
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS feedback (

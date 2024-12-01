@@ -25,11 +25,11 @@ public class GerenciadorFeedbacks {
         List<Feedback_POI> feedbacks = new ArrayList<>();
 
         // Recuperando o arquivo
-        //System.out.println("Abrindo arquivo Excel...");
-        //@Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
+        System.out.println("Abrindo arquivo Excel...");
+        @Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
 
         //Para Facilitar teste, não excluir
-        @Cleanup FileInputStream file = new FileInputStream("src/main/feedbacks_categorizados.xlsx");
+        //@Cleanup FileInputStream file = new FileInputStream("src/main/feedbacks_categorizados.xlsx");
 
         Workbook workbook = new XSSFWorkbook(file);
 
@@ -100,8 +100,9 @@ public class GerenciadorFeedbacks {
     }
 
     public void verificarENotificar(List<Feedback_POI> feedbacks) throws IOException, InterruptedException {
-        Slack slack = new Slack("https://hooks.slack.com/services/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");
+        Slack slack = new Slack("https://hooks.slack.com/services/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");
 
+        System.out.println("\n========== Iniciando envio de notificação "+ getCurrentTimestamp() +" ==========");
         // Inicializando contadores como Integer
         Integer totalCincoEstrelas = 0;
         Integer totalAvaliacoesNegativas = 0;
@@ -157,6 +158,8 @@ public class GerenciadorFeedbacks {
             String mensagemFinal = "🎉 Uau, seu negócio tem muitas avaliações boas, continue assim para que ainda tenha ótimas impressões!";
             slack.sendMessage(mensagemFinal);
         }
+
+        System.out.println("\n========== Envio de notificação finalizada "+ getCurrentTimestamp() +" ==========");
     }
 
 

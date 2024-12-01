@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class TratacaoDeDados {
 
     public List<Feedback_POI> processarDados(List<Feedback_POI> feedbacks) {
-        System.out.println("========== Iniciando o processamento dos dados "+ getCurrentTimestamp() +" ==========");
+        System.out.println("\n========== Iniciando o processamento dos dados "+ getCurrentTimestamp() +" ==========");
         List<Feedback_POI> dadosTratados = new ArrayList<>();
         System.out.println("Processando...\n");
 
@@ -149,8 +149,8 @@ public class TratacaoDeDados {
                 }
 
             } catch (Exception e) {
-                System.out.println("Erro ao processar o feedback: " + comentario);
-                e.printStackTrace();  // Aqui você pode logar a exceção de forma mais detalhada
+                //System.out.println("Erro ao processar o feedback: " + comentario);
+                //e.printStackTrace();  // Aqui você pode logar a exceção de forma mais detalhada
             }
         }
 
@@ -162,10 +162,11 @@ public class TratacaoDeDados {
     public static void inserirFiliais(List<Feedback_POI> feedbacks) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        System.out.println("========== Iniciando a inserção das filiais no banco " + sdf.format(new Date()) + " ==========");
+        System.out.println("\n========== Iniciando a inserção das filiais no banco " + sdf.format(new Date()) + " ==========");
 
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
+        System.out.println("Processando...");
 
         // Itera sobre cada feedback da lista
         for (Feedback_POI feedback : feedbacks) {
@@ -204,7 +205,7 @@ public class TratacaoDeDados {
                     );
 
                     if (rowsAffectedFilial > 0) {
-                        System.out.println("Filial inserida com sucesso: " + nomeFilial + " - " + enderecoFilial);
+                        //System.out.println("Filial inserida com sucesso: " + nomeFilial + " - " + enderecoFilial);
                     } else {
                         System.out.println("Erro ao tentar inserir a filial: " + nomeFilial + " - " + enderecoFilial);
                     }
@@ -214,24 +215,27 @@ public class TratacaoDeDados {
             }
         }
 
-        System.out.println("========== Inserção de filiais concluída " + sdf.format(new Date()) + " ==========");
+        System.out.println("\n========== Inserção de filiais concluída "+ sdf.format(new Date()) +" ==========");
     }
 
     public static void gerarRecomendacoes() {
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
+        System.out.println("\n========== Iniciando geração de recomendações "+ sdf.format(new Date()) +" ==========");
+        connection.update("TRUNCATE TABLE recomendacoesIA");
         for (int idCategoria = 1; idCategoria <= 5; idCategoria++) {
 
             // Constrói o prompt inicial para enviar para a IA com as instruções
             StringBuilder promptBuilder = new StringBuilder("""
-        Quero que gere 3 recomendações da melhorias em portugues do brasil, no seguinte formato: 
-        1 - [Recomendação aqui]
-        2 - [Recomendação aqui]
-        3 - [Recomendação aqui]
+            Quero que gere 3 recomendações da melhorias em portugues do brasil, no seguinte formato: 
+            1 - [Recomendação aqui]
+            2 - [Recomendação aqui]
+            3 - [Recomendação aqui]
         
-        Suas Recomendações devem ser feitas como bases nesses comentarios:
-        """);
+            Suas Recomendações devem ser feitas como bases nesses comentarios:
+            """);
 
             // Consulta ao banco de dados para obter os feedbacks de uma categoria específica
             List<String> feedbacks = connection.query(
@@ -261,9 +265,9 @@ public class TratacaoDeDados {
             }
 
             // Exibe a resposta da IA para visualização
-            System.out.println("Categoria: " + idCategoria); // Mostra o número da categoria
-            System.out.println("Recomendações da IA:");
-            System.out.println(respostaIA + "\n"); // Exibe as recomendações
+            //System.out.println("Categoria: " + idCategoria); // Mostra o número da categoria
+            //System.out.println("Recomendações da IA:");
+            // System.out.println(respostaIA + "\n"); // Exibe as recomendações
 
             // Processa a resposta da IA para separar as recomendações
             // As recomendações são separadas por duas quebras de linha (\n\n)
@@ -294,13 +298,16 @@ public class TratacaoDeDados {
             }
             System.out.println("\n------------------------------------\n");
         }
+
+        System.out.println("\n========== Geração de recomendações finalizada "+ sdf.format(new Date()) +" ==========");
     }
 
     public static void gerarPalavrasChavesPositivas() {
-        System.out.println("\n----------------- Iniciando Geração de Palavras chaves Possitivas -------------------\n");
+
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
+        connection.update("TRUNCATE TABLE palavrasChave");
 
         // Inicializa o prompt que será usado para gerar palavras-chave positivas
         StringBuilder promptBuilderPositivo = new StringBuilder("""
@@ -342,11 +349,11 @@ public class TratacaoDeDados {
             }
 
             // Exibe a resposta obtida da IA para fins de depuração
-            System.out.println("\n------------------------------------\n");
-            System.out.println("Categoria: " + idCategoria);
-            System.out.println("Palavras Chaves Positivas da IA:");
-            System.out.println(respostaIAPositiva + "\n");
-            System.out.println("\n------------------------------------\n");
+            // System.out.println("\n------------------------------------\n");
+            // System.out.println("Categoria: " + idCategoria);
+            // System.out.println("Palavras Chaves Positivas da IA:");
+            // System.out.println(respostaIAPositiva + "\n");
+            // System.out.println("\n------------------------------------\n");
 
             try {
                 // Insere as palavras-chave geradas no banco de dados, associadas à categoria atual
@@ -360,12 +367,11 @@ public class TratacaoDeDados {
                 // Log de erro em caso de falha na inserção
                 System.err.println("Erro ao inserir palavras chaves positivas para a categoria " + idCategoria + ": " + e.getMessage());
             }
+            System.out.println("\n------------------------------------\n");
         }
-        System.out.println("\n----------------- Fim da Geração-------------------\n");
     }
 
     public static void gerarPalavrasChavesNeutras() {
-        System.out.println("\n----------------- Iniciando Geração de Palavras chaves Neutras -------------------\n");
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
@@ -410,11 +416,11 @@ public class TratacaoDeDados {
             }
 
             // Exibe a resposta obtida da IA para fins de depuração
-            System.out.println("\n------------------------------------\n");
-            System.out.println("Categoria: " + idCategoria);
-            System.out.println("Palavras Chaves Neutras da IA:");
-            System.out.println(respostaIANeutro + "\n");
-            System.out.println("\n------------------------------------\n");
+            // System.out.println("\n------------------------------------\n");
+            // System.out.println("Categoria: " + idCategoria);
+            // System.out.println("Palavras Chaves Neutras da IA:");
+            // System.out.println(respostaIANeutro + "\n");
+            // System.out.println("\n------------------------------------\n");
 
             try {
                 // Insere as palavras-chave geradas no banco de dados, associadas à categoria atual
@@ -428,12 +434,11 @@ public class TratacaoDeDados {
                 // Log de erro em caso de falha na inserção
                 System.err.println("Erro ao inserir palavras chaves neutras para a categoria " + idCategoria + ": " + e.getMessage());
             }
+            System.out.println("\n------------------------------------\n");
         }
-        System.out.println("\n----------------- Fim da Geração-------------------\n");
     }
 
     public static void gerarPalavrasChavesNegativas() {
-        System.out.println("\n----------------- Iniciando Geração de Palavras chaves Negativas -------------------\n");
         // Cria uma instância para conexão com o banco de dados
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
@@ -478,11 +483,11 @@ public class TratacaoDeDados {
             }
 
             // Exibe a resposta obtida da IA para fins de depuração
-            System.out.println("\n------------------------------------\n");
-            System.out.println("Categoria: " + idCategoria);
-            System.out.println("Palavras Chaves Negativas da IA:");
-            System.out.println(respostaIANegativo + "\n");
-            System.out.println("\n------------------------------------\n");
+            // System.out.println("\n------------------------------------\n");
+            // System.out.println("Categoria: " + idCategoria);
+            // System.out.println("Palavras Chaves Negativas da IA:");
+            // System.out.println(respostaIANegativo + "\n");
+            // System.out.println("\n------------------------------------\n");
 
             try {
                 // Insere as palavras-chave geradas no banco de dados, associadas à categoria atual
@@ -496,8 +501,8 @@ public class TratacaoDeDados {
                 // Log de erro em caso de falha na inserção
                 System.err.println("Erro ao inserir palavras chaves negativas para a categoria " + idCategoria + ": " + e.getMessage());
             }
+            System.out.println("\n------------------------------------\n")
         }
-        System.out.println("\n----------------- Fim da Geração-------------------\n");
     }
 
 
