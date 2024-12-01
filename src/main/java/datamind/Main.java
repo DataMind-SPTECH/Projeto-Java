@@ -34,6 +34,7 @@ public class Main {
 
         // Função para gerenciar feedbacks
         app.runFeedbackManager();
+
     }
 
     public String getCurrentTimestamp() {
@@ -112,7 +113,13 @@ public class Main {
         TratacaoDeDados.inserirFiliais(feedbacks);
         List<Feedback_POI> dadosTratados = TratadorDeDados.processarDados(feedbacks);
         TratacaoDeDados.inserindoDadosNoBanco(dadosTratados);
+      
         gerenciadorFeedbacks.verificarENotificar(dadosTratados);
+
+        TratacaoDeDados.gerarRecomendacoes();
+        TratacaoDeDados.gerarPalavrasChavesPositivas();
+        TratacaoDeDados.gerarPalavrasChavesNeutras();
+        TratacaoDeDados.gerarPalavrasChavesNegativas();
     }
 
     private void setupDatabase() {
@@ -154,7 +161,7 @@ public class Main {
                     latitude VARCHAR(45),
                     longitude VARCHAR(45),
                     fkEmpresa INT,
-                    FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
+                    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
                 );
                 """);
 
@@ -199,7 +206,7 @@ public class Main {
         connection.execute("""
                 CREATE TABLE IF NOT EXISTS recomendacoesIA (
                     idRecomendacao INT PRIMARY KEY AUTO_INCREMENT,
-                    descricao VARCHAR(500),
+                    descricao VARCHAR(1000),
                   	dtCriacao DATE,
                     fkCategoria INT,
                   	FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
@@ -207,8 +214,8 @@ public class Main {
                 """);
 
         //Inserindo recomendação
-        connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 1, "Você poderia redistribuir os funcionários conforme a demanda do Drive-Thru", "2024-10-29", 1);
-        connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 2, "Você poderia acelerar a montagem do lanche para que ele não esfrie", "2024-10-30", 2);
+       // connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 1, "Você poderia redistribuir os funcionários conforme a demanda do Drive-Thru", "2024-10-29", 1);
+       // connection.update("INSERT IGNORE INTO recomendacoesIA (idRecomendacao, descricao, dtCriacao, fkCategoria) VALUES (?, ?, ?, ?);", 2, "Você poderia acelerar a montagem do lanche para que ele não esfrie", "2024-10-30", 2);
 
 
         connection.execute("""
@@ -220,6 +227,16 @@ public class Main {
                     fkCategoria INT,
                     FOREIGN KEY (fkFilial) REFERENCES filial(idfilial),
                     FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
+                );
+                """);
+
+        connection.execute("""
+                CREATE TABLE IF NOT EXISTS palavrasChave (
+                 idPalavrasChave INT PRIMARY KEY AUTO_INCREMENT,
+                 qualidade VARCHAR(45),
+                 palavras VARCHAR(400),
+                 fkCategoria INT,
+                 FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
                 );
                 """);
     }
