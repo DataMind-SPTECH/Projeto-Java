@@ -108,9 +108,6 @@ public class GerenciadorFeedbacks {
         return IteratorUtils.toList(iterator);
     }
 
-    public void imprimirRecomendacao(List<Categoria> categorias){
-        categorias.forEach(System.out::println);
-    }
 
     public void imprimirPorIndice(List<Feedback_POI> feedbacks, int indice) {
         System.out.println("\n========== Imprimindo feedback por índice ==========\n");
