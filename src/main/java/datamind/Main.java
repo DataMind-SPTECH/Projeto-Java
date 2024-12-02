@@ -1,6 +1,5 @@
 package datamind;
 
-//import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +25,10 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException  {
         Main app = new Main();
 
-        // Função para conectar no bucket
         app.connectionBucket();
 
-        // Função para gerenciar conexão e criar tabelas
-        //app.setupDatabase();
+        app.setupDatabase();
 
-        // Função para gerenciar feedbacks
         app.runFeedbackManager();
 
     }
@@ -46,7 +42,6 @@ public class Main {
         S3Client s3Client = new S3Provider().getS3Client();
         String bucketName = System.getenv("NAME_BUCKET");
 
-        // Listando objetos do bucket
         String date = getCurrentTimestamp();
         System.out.println("========== Iniciando Conexão com o bucket " + date + " ==========");
         List<S3Object> objects = null;
@@ -132,116 +127,24 @@ public class Main {
     }
 
     private void setupDatabase() {
-        // Realizando conexão
         DBConnectionProvider dbConnectionProvider = new DBConnectionProvider();
         JdbcTemplate connection = dbConnectionProvider.getConnection();
 
-        // Criando tabelas no banco de dados
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS dataset (
-                    idDataset INT PRIMARY KEY AUTO_INCREMENT,
-                    url VARCHAR(400),
-                    nome VARCHAR(45),
-                    descricao VARCHAR(50)
-                );
-                """);
-        connection.update("INSERT IGNORE INTO dataset(idDataset, url, nome, descricao) VALUES (?, ?, ?, ?)",1, "datasetmac.com", "Mc Donald's dados", "50 feedbacks");
+        connection.update("INSERT IGNORE INTO dataset(idDataset, url, nome, descricao) VALUES (?, ?, ?, ?)",1, "http://dataset1.com", "Mc Donald's dados", "dados do Mc Donald's");
 
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS empresa (
-                    idEmpresa INT PRIMARY KEY AUTO_INCREMENT,
-                    nomeEmpresa VARCHAR(45),
-                    cnpj CHAR(14),
-                    urlFoto VARCHAR(264),
-                    fkDataset INT,
-                    FOREIGN KEY (fkDataset) REFERENCES dataset(idDataset)
-                );
-                """);
+        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, fkDataset) VALUES (?, ?, ?, ?, ?);", 1, "McDonald's", "12345678000195", 1);
 
-        // Inserindo dados da empresa
-        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, urlfoto, fkDataset) VALUES (?, ?, ?, ?, ?);", 1, "McDonald's", "42591651000143" , null, 1);
+        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 1, "Gerente");
+        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 2, "Analista");
+        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 3, "Desenvolvedor");
 
-
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS filial (
-                    idFilial INT PRIMARY KEY AUTO_INCREMENT,
-                    nome VARCHAR (200),
-                    endereco VARCHAR(150),
-                    latitude VARCHAR(45),
-                    longitude VARCHAR(45),
-                    fkEmpresa INT,
-                    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa)
-                );
-                """);
-
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS cargo (
-                    idCargo INT PRIMARY KEY AUTO_INCREMENT,
-                    cargo VARCHAR(45)
-                );
-                """);
-        connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 1, "Responsável Legal");
-
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS funcionario (
-                    idFuncionario INT PRIMARY KEY AUTO_INCREMENT,
-                    nome VARCHAR(45),
-                    email VARCHAR(45),
-                    senha VARCHAR(20),
-                    telefone CHAR(11),
-                    cpf CHAR(11),
-                    fkEmpresa INT,
-                    fkCargo INT,
-                    FOREIGN KEY (fkEmpresa) REFERENCES empresa(idEmpresa),
-                    FOREIGN KEY (fkCargo) REFERENCES cargo(idCargo)
-                );
-                """);
         connection.update("INSERT IGNORE INTO funcionario (idFuncionario, nome, email, senha, telefone, cpf, fkEmpresa, fkCargo) VALUES (?, ?, ?, ?, ?, ?, ?, ?);", 1, "Henrique", "henrique@gmail.com", "12345678", null, "12345678901", 1, 1);
 
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS categoria (
-                    idCategoria INT PRIMARY KEY AUTO_INCREMENT,
-                    descricao VARCHAR(45)
-                );
-                """);
-
-        //Inserindo categorias
         connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 1, "Qualidade do produto");
         connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 2, "Atendimento");
         connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 3, "Tempo de espera");
         connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 4, "Experiência do drive thru");
         connection.update("INSERT IGNORE INTO categoria (idCategoria, descricao) VALUES (?, ?);", 5, "Experiência geral");
 
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS recomendacoesIA (
-                    idRecomendacao INT PRIMARY KEY AUTO_INCREMENT,
-                    descricao VARCHAR(1000),
-                  	dtCriacao DATE,
-                    fkCategoria INT,
-                  	FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
-                );
-                """);
-
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS feedback (
-                    idFeedback INT PRIMARY KEY AUTO_INCREMENT,
-                    descricao VARCHAR(10000),
-                    rating INT,
-                    fkFilial INT,
-                    fkCategoria INT,
-                    FOREIGN KEY (fkFilial) REFERENCES filial(idfilial),
-                    FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
-                );
-                """);
-
-        connection.execute("""
-                CREATE TABLE IF NOT EXISTS palavrasChave (
-                 idPalavrasChave INT PRIMARY KEY AUTO_INCREMENT,
-                 qualidade VARCHAR(45),
-                 palavras VARCHAR(400),
-                 fkCategoria INT,
-                 FOREIGN KEY (fkCategoria) REFERENCES categoria(idCategoria)
-                );
-                """);
     }
 }

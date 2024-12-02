@@ -22,15 +22,6 @@ public class DBConnectionProvider {
         basicDataSource.setPassword(DB_PASSWORD);
         basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
-
-        //Para facilitar teste, não excluir
-
-        /*BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setUrl("jdbc:mysql://localhost:3306/datamind");
-        basicDataSource.setUsername("root"); // Nome de usuário correto
-        basicDataSource.setPassword("arr161820"); // Senha correta
-        basicDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");*/
-
         this.dataSource = basicDataSource;
     }
 

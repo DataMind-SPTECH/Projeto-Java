@@ -24,38 +24,27 @@ public class GerenciadorFeedbacks {
 
         List<Feedback_POI> feedbacks = new ArrayList<>();
 
-        // Recuperando o arquivo
         System.out.println("Abrindo arquivo Excel...");
         @Cleanup FileInputStream file = new FileInputStream("DataSet-McDonalds.xlsx");
 
-        //Para Facilitar teste, não excluir
-        //@Cleanup FileInputStream file = new FileInputStream("src/main/feedbacks_categorizados.xlsx");
-
         Workbook workbook = new XSSFWorkbook(file);
 
-        // Setando a aba
         System.out.println("Carregando primeira aba da planilha...");
         Sheet sheet = workbook.getSheetAt(0);
 
-        // Setando as linhas
         System.out.println("Lendo linhas da planilha...\n");
         List<Row> rows = (List<Row>) toList(sheet.iterator());
 
-        // Removendo os títulos
         rows.remove(0);
 
-        // Processando cada linha
         rows.forEach(row -> {
 
-            // Setando as células
             List<Cell> cells = (List<Cell>) toList(row.cellIterator());
 
             if (cells.size() < 11) {
-                //System.err.println("Linha ignorada devido ao número insuficiente de células: " + cells.size());
-                return; // Ignora linhas inválidas
+                return;
             }
 
-            // Atribui os valores para a classe Feedback_POI
             Feedback_POI feedback = Feedback_POI.builder()
                     .Id((int) cells.get(0).getNumericCellValue())
                     .Nome(cells.get(1).getStringCellValue())
@@ -80,7 +69,7 @@ public class GerenciadorFeedbacks {
 
     private static String getCellValueAsString(Cell cell) {
         if (cell == null) {
-            return ""; // Retorna uma string vazia se a célula for nula
+            return "";
         }
         switch (cell.getCellType()) {
             case NUMERIC:
@@ -90,10 +79,9 @@ public class GerenciadorFeedbacks {
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
-                // Avalia a fórmula e retorna o resultado
                 return String.valueOf(cell.getNumericCellValue());
             case BLANK:
-                return ""; // Retorna uma string vazia para células em branco
+                return "";
             default:
                 throw new IllegalStateException("Tipo de célula inesperado: " + cell.getCellType());
         }
@@ -103,50 +91,41 @@ public class GerenciadorFeedbacks {
         Slack slack = new Slack(System.getenv("LINK_SLACK"));
 
         System.out.println("\n========== Iniciando envio de notificação "+ getCurrentTimestamp() +" ==========");
-        // Inicializando contadores como Integer
         Integer totalCincoEstrelas = 0;
         Integer totalAvaliacoesNegativas = 0;
         Integer totalAvaliacoesNeutras = 0;
 
-        // Percorrendo cada feedback e verificando as avaliações individuais
         for (Feedback_POI feedback : feedbacks) {
             String avaliacao = feedback.getAvaliacao();
 
-            // Verifica se a avaliação é 5 estrelas
             if (avaliacao.equals("5")) {
                 totalCincoEstrelas++;
             }
 
-            // Verifica se a avaliação é 2 estrelas ou menos (avaliação negativa)
             if (avaliacao.equals("2") || avaliacao.equals("1")) {
                 totalAvaliacoesNegativas++;
             }
 
-            // Verifica se a avaliação é 3 estrelas (avaliação neutra)
             if (avaliacao.equals("3")) {
                 totalAvaliacoesNeutras++;
             }
         }
 
-        // Envia a mensagem se houver avaliações de 5 estrelas
         if (totalCincoEstrelas > 0) {
             String alertaPositivo = "🎉 Sucesso: Recebemos " + totalCincoEstrelas + " avaliação(s) de 5 estrelas!";
             slack.sendMessage(alertaPositivo);
         }
 
-        // Envia a mensagem se houver avaliações negativas (1 ou 2 estrelas)
         if (totalAvaliacoesNegativas > 0) {
             String alertaNegativo = "🚨 Alerta: Recebemos " + totalAvaliacoesNegativas + " avaliação(ões) negativa(s)!";
             slack.sendMessage(alertaNegativo);
         }
 
-        // Envia a mensagem se houver avaliações neutras (3 estrelas)
         if (totalAvaliacoesNeutras > 0) {
             String alertaNeutra = "🤔 Neutro: Recebemos " + totalAvaliacoesNeutras + " avaliação(ões) neutra(s)!";
             slack.sendMessage(alertaNeutra);
         }
 
-        // Exibe a mensagem final com base nas comparações de quantidade
         if (totalAvaliacoesNegativas > totalAvaliacoesNeutras && totalAvaliacoesNegativas > totalCincoEstrelas) {
             String mensagemFinal =
                     "⚠️ Cuidado, temos muitas avaliações negativas por aqui, que tal acessar a Dashboard para algumas recomendações de melhoria?";
