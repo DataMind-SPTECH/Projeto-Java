@@ -25,9 +25,9 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException  {
         Main app = new Main();
 
-        app.connectionBucket();
-
         app.setupDatabase();
+
+        app.connectionBucket();
 
         app.runFeedbackManager();
 
@@ -132,7 +132,7 @@ public class Main {
 
         connection.update("INSERT IGNORE INTO dataset(idDataset, url, nome, descricao) VALUES (?, ?, ?, ?)",1, "http://dataset1.com", "Mc Donald's dados", "dados do Mc Donald's");
 
-        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, fkDataset) VALUES (?, ?, ?, ?, ?);", 1, "McDonald's", "12345678000195", 1);
+        connection.update("INSERT IGNORE INTO empresa (idEmpresa, nomeEmpresa, cnpj, fkDataset) VALUES ( ?, ?, ?, ?);", 1, "McDonald's", "12345678000195", 1);
 
         connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 1, "Gerente");
         connection.update("INSERT IGNORE INTO cargo (idCargo, cargo) VALUES (?, ?);", 2, "Analista");
