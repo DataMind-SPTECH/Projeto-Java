@@ -106,7 +106,7 @@ public class GerenciadorFeedbacks {
                 totalAvaliacoesNegativas++;
             }
 
-            if (avaliacao.equals("3")) {
+            if (avaliacao.equals("3") || avaliacao.equals("4")) {
                 totalAvaliacoesNeutras++;
             }
         }
